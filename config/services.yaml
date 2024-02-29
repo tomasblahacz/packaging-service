@@ -1,0 +1,23 @@
+services:
+    _defaults:
+        autowire: true
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/Entity'
+
+    JMS\Serializer\Serializer:
+        factory: ['App\Jms\SerializerFactory', 'create']
+
+    Doctrine\ORM\EntityManager:
+        factory: ['App\Doctrine\EntityManagerFactory', 'create']
+        public: true
+
+    Psr\Log\LoggerInterface:
+        factory: ['App\Logger\LoggerFactory', 'create']
+
+    Symfony\Component\Validator\Validator\ValidatorInterface:
+        factory: ['App\Validator\ValidatorFactory', 'create']
+
+    App\Application:
+        public: true

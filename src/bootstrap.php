@@ -1,18 +1,19 @@
 <?php
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
-use Doctrine\ORM\ORMSetup;
+declare(strict_types = 1);
+
+use Symfony\Component\Config\FileLocator;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$config = ORMSetup::createAttributeMetadataConfiguration([__DIR__], true);
-$config->setNamingStrategy(new UnderscoreNamingStrategy());
 
-return EntityManager::create([
-    'driver' => 'pdo_mysql',
-    'host' => 'shipmonk-packing-mysql',
-    'user' => 'root',
-    'password' => 'secret',
-    'dbname' => 'packing',
-], $config);
+$containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+$loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader(
+    $containerBuilder,
+    new FileLocator(__DIR__)
+);
+$loader->load(__DIR__ . '/../config/services.yaml');
+
+$containerBuilder->compile();
+
+return $containerBuilder;
