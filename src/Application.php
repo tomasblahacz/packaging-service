@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App;
 
 use App\Dto\IdentifiedBoxListFactory;
+use App\Facade\ApplicationFacade;
 use App\Http\JsonResponseFactory;
 use App\Packaging\Exception\NoAvailablePackageException;
 use App\Packaging\PackagingResolver;
@@ -20,16 +21,14 @@ use Throwable;
 class Application
 {
 
-    // @todo refactor to controller facade
     public function __construct(
         readonly private PackagingRequestSerializer $packagingRequestSerializer,
-        readonly private IdentifiedBoxListFactory $identifiedBoxListFactory,
-        readonly private PackagingResolver $packagingResolver,
         readonly private PackagingResponseFactory $packagingResponseFactory,
         readonly private PackagingResponseSerializer $packagingResponseSerializer,
         readonly private JsonResponseFactory $jsonResponseFactory,
         readonly private LoggerInterface $logger,
-        readonly private ValidatorInterface $validator
+        readonly private ValidatorInterface $validator,
+        readonly private ApplicationFacade $applicationFacade
     )
     {
     }
@@ -45,12 +44,10 @@ class Application
             return $this->jsonResponseFactory->createErrorFromMessage(400, 'Invalid request');
         }
 
-        $boxes = $this->identifiedBoxListFactory->createFromPackagingRequest($packagingRequest);
-
         try {
-            $packaging = $this->packagingResolver->solveBoxSize($boxes);
-
-            $response = $this->packagingResponseFactory->createResponse($packaging);
+            $response = $this->packagingResponseFactory->createResponse(
+                $this->applicationFacade->handleRequest($packagingRequest)
+            );
             return $this->jsonResponseFactory->create(200, $this->packagingResponseSerializer->serialize($response));
         } catch (NoAvailablePackageException $e) {
             return $this->jsonResponseFactory->createError(404, $e);

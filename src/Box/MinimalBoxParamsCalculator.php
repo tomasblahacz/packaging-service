@@ -6,6 +6,7 @@ namespace App\Box;
 
 use App\Dto\Box;
 use App\Dto\BoxList;
+use App\Dto\IdentifiedBoxList;
 use App\Entity\Packaging;
 use App\List\PackagingList;
 
@@ -20,7 +21,7 @@ class MinimalBoxParamsCalculator
 
     public function getMinimalPackaging(
         PackagingList $availablePackagings,
-        BoxList $boxes
+        IdentifiedBoxList $boxes
     ): Packaging
     {
         $height = 0;

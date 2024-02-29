@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Box;
 
 use App\Dto\BoxList;
+use App\Dto\IdentifiedBoxList;
 use App\Entity\Packaging;
 use App\Repository\PackagingRepository;
 
@@ -19,7 +20,7 @@ class MinimalBoxParamsFacade
     }
 
     public function getMinimalPackaging(
-        BoxList $boxes
+        IdentifiedBoxList $boxes
     ): Packaging
     {
         $availablePackagings = $this->packagingRepository->findAll();
