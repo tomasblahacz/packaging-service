@@ -15,7 +15,7 @@ class IdentifiedBoxListFactory
     ): IdentifiedBoxList
     {
         $boxes = array_map(
-            function (PackagingRequestProduct $product) {
+            function (PackagingRequestProduct $product): IdentifiedBox {
                 return new IdentifiedBox(
                     $product->getId(),
                     $product->getLength(),

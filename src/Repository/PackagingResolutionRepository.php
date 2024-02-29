@@ -19,7 +19,9 @@ class PackagingResolutionRepository
 
     public function getByBoxListIdentifier(string $boxListIdentifier): PackagingResolution
     {
-        $boxSizeResolution = $this->entityManager->getRepository(PackagingResolution::class)->findOneBy(['boxListIdentifier' => $boxListIdentifier]);
+        $boxSizeResolution = $this->entityManager
+            ->getRepository(PackagingResolution::class)
+            ->findOneBy(['boxListIdentifier' => $boxListIdentifier]);
 
         if ($boxSizeResolution === null) {
             throw new BoxSizeNotResolvedException();

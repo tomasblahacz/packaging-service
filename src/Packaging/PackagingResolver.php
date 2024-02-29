@@ -16,6 +16,7 @@ use App\Factory\PackagingResolutionFactory;
 use App\Packaging\Exception\NoAvailablePackageException;
 use App\Repository\Exception\BoxSizeNotResolvedException;
 use App\Repository\PackagingResolutionRepository;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 
 class PackagingResolver
@@ -43,7 +44,7 @@ class PackagingResolver
             );
             return $packagingResolution->getPackaging();
         } catch (BoxSizeNotResolvedException) {
-            // load from API
+            // Not yet resolved and cached, load from API
         };
 
         try {
@@ -59,15 +60,16 @@ class PackagingResolver
         } catch (BinPackingStatusNotOkException | MoreThanOneBinNeededException | NoBinFoundException $e) {
             // @todo refactor exceptions to extend common "non-recovarable" parent
             throw new NoAvailablePackageException($e->getMessage(), $e->getCode(), $e);
-        } catch (ItemsCountMismatchException $e) {
+        } catch (GuzzleException | ItemsCountMismatchException $e) {
             // @todo refactor exceptions to extend common "recovarable" parent
             $this->logger->error(
-                'Could not resolve box size using Bin API',
+                'Could not resolve box size using 3D Bin API',
                 [
                     'exception' => $e::class,
                     'message' => $e->getMessage(),
                 ]
             );
+
             return $this->minimalBoxParamsFacade->getMinimalPackaging($boxes);
         }
     }

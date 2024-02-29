@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App;
 
 use App\Dto\IdentifiedBoxListFactory;
+use App\Exception\NoPackagingAvailableException;
 use App\Facade\ApplicationFacade;
 use App\Http\JsonResponseFactory;
 use App\Packaging\Exception\NoAvailablePackageException;
@@ -49,7 +50,8 @@ class Application
                 $this->applicationFacade->handleRequest($packagingRequest)
             );
             return $this->jsonResponseFactory->create(200, $this->packagingResponseSerializer->serialize($response));
-        } catch (NoAvailablePackageException $e) {
+        } catch (NoAvailablePackageException | NoPackagingAvailableException $e) {
+            // @todo refactor to common exception
             return $this->jsonResponseFactory->createError(404, $e);
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);

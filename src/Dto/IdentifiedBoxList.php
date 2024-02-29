@@ -37,6 +37,7 @@ class IdentifiedBoxList
     {
         $scalarParams = [];
 
+        // @todo sorting by volumes might not be deterministic... add tests and check. Might be problem for packages with same volume items
         foreach ($this->sortByVolume()->getBoxes() as $box) {
             $scalarParams[] = $box->getSideLengthsAscending();
         }
